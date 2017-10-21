@@ -47,19 +47,17 @@ init_oo(size_t o, size_t v, xm_tensor_t *oo)
 	(void)v;
 
 	for (i = 0; i < o; i++) {
-		xm_tensor_set_canonical_block(oo, xm_dim_2(i, i));
-		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, i+o),
-		    xm_dim_2(i, i), xm_dim_2(0, 1), 1);
-	}
-	for (i = 0; i < o; i++) {
-	for (j = 0; j < i; j++) {
+	for (j = i; j < o; j++) {
 		xm_tensor_set_canonical_block(oo, xm_dim_2(i, j));
 		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
 		    xm_dim_2(i, j), xm_dim_2(0, 1), 1);
-		xm_tensor_set_derivative_block(oo, xm_dim_2(j, i),
-		    xm_dim_2(i, j), xm_dim_2(1, 0), -1);
-		xm_tensor_set_derivative_block(oo, xm_dim_2(j+o, i+o),
-		    xm_dim_2(i, j), xm_dim_2(1, 0), -1);
+	}}
+	for (i = 0; i < o; i++) {
+	for (j = 0; j < i; j++) {
+		xm_tensor_set_derivative_block(oo, xm_dim_2(i, j),
+		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
+		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
+		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
 	}}
 }
 
