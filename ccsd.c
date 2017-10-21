@@ -40,6 +40,35 @@ timer_stop(time_t timer)
 }
 
 static void
+split_block_space(xm_block_space_t *bs)
+{
+	xm_dim_t absdims;
+	const size_t blksz = 32;
+	size_t i, j, pos;
+
+	absdims = xm_block_space_get_abs_dims(bs);
+
+	for (j = 0; j < absdims.n; j++) {
+		size_t dim = absdims.i[j] / 2;
+		size_t nblks = dim % blksz ? dim / blksz + 1 : dim / blksz;
+
+		for(i = 0, pos = 0; i < nblks - 1; i++) {
+			size_t sz = dim / (nblks - i);
+
+			if(sz > 1 && sz % 2 && nblks - i > 1) {
+				if(sz < blksz) sz++;
+				else sz--;
+			}
+			dim -= sz;
+			pos += sz;
+			xm_block_space_split(bs, j, pos);
+			xm_block_space_split(bs, j, absdims.i[j] / 2 + pos);
+		}
+		xm_block_space_split(bs, j, absdims.i[j] / 2);
+	}
+}
+
+static void
 init_oo(size_t o, size_t v, xm_tensor_t *oo)
 {
 	size_t i, j;
@@ -382,6 +411,7 @@ main(int argc, char **argv)
 	xm_tensor_t *f3_oo, *t1, *t1new;
 	xm_tensor_t *i_oooo, *i4_oooo, *i_ooov, *i2a_ooov, *i_ovov, *i1a_ovov;
 	xm_tensor_t *i_oovv, *tt_oovv, *i_ovvv, *i_vvvv, *t2, *t2new;
+	xm_dim_t nblks;
 	size_t ob, vb, o, v;
 	int type = XM_SCALAR_DOUBLE;
 	time_t timer;
@@ -390,16 +420,14 @@ main(int argc, char **argv)
 	MPI_Init(&argc, &argv);
 #endif
 	if (argc != 3) {
-		print("usage: ccsd ob vb\n");
+		print("usage: ccsd o v\n");
 #ifdef XM_USE_MPI
 		MPI_Finalize();
 #endif
 		return 1;
 	}
-	ob = (size_t)strtoll(argv[1], NULL, 10);
-	vb = (size_t)strtoll(argv[2], NULL, 10);
-	o = 32 * ob;
-	v = 32 * vb;
+	o = (size_t)strtoll(argv[1], NULL, 10);
+	v = (size_t)strtoll(argv[2], NULL, 10);
 	print("CCSD, C1, o = %zu, v = %zu\n", o, v);
 
 	timer = timer_start("creating the objects");
@@ -415,15 +443,19 @@ main(int argc, char **argv)
 	bsovvv = xm_block_space_create(xm_dim_4(2*o, 2*v, 2*v, 2*v));
 	bsvvvv = xm_block_space_create(xm_dim_4(2*v, 2*v, 2*v, 2*v));
 
-	xm_block_space_autosplit(bsoo);
-	xm_block_space_autosplit(bsov);
-	xm_block_space_autosplit(bsvv);
-	xm_block_space_autosplit(bsoooo);
-	xm_block_space_autosplit(bsooov);
-	xm_block_space_autosplit(bsovov);
-	xm_block_space_autosplit(bsoovv);
-	xm_block_space_autosplit(bsovvv);
-	xm_block_space_autosplit(bsvvvv);
+	split_block_space(bsoo);
+	split_block_space(bsov);
+	split_block_space(bsvv);
+	split_block_space(bsoooo);
+	split_block_space(bsooov);
+	split_block_space(bsovov);
+	split_block_space(bsoovv);
+	split_block_space(bsovvv);
+	split_block_space(bsvvvv);
+
+	nblks = xm_block_space_get_nblocks(bsov);
+	ob = nblks.i[0] / 2;
+	vb = nblks.i[1] / 2;
 
 	f_oo = xm_tensor_create(bsoo, type, allocator);
 	f_ov = xm_tensor_create(bsov, type, allocator);
