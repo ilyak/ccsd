@@ -258,22 +258,22 @@ init_ovov(size_t o, size_t v, xm_tensor_t *ovov)
 	for (b = 0; b < v; b++) {
 		/* aaaa */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i,a,j,b),
-		    xm_dim_4(j,b,i,a), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b,i,a), xm_dim_4(2,3,0,1), 1);
 		/* bbbb */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i+o,a+v,j+o,b+v),
-		    xm_dim_4(j,b,i,a), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b,i,a), xm_dim_4(2,3,0,1), 1);
 		/* abba */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i,a+v,j+o,b),
-		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(2,3,0,1), 1);
 		/* baab */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i+o,a,j,b+v),
-		    xm_dim_4(j,b+v,i+o,a), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b+v,i+o,a), xm_dim_4(2,3,0,1), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i,a+v,j,b+v),
-		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(2,3,0,1), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(ovov, xm_dim_4(i+o,a,j+o,b),
-		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,b+v,i,a+v), xm_dim_4(2,3,0,1), 1);
 	}}}}
 }
 
