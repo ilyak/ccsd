@@ -48,14 +48,18 @@ init_oo(size_t o, size_t v, xm_tensor_t *oo)
 
 	for (i = 0; i < o; i++) {
 	for (j = i; j < o; j++) {
+		/* aa */
 		xm_tensor_set_canonical_block(oo, xm_dim_2(i, j));
+		/* bb */
 		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
 		    xm_dim_2(i, j), xm_dim_2(0, 1), 1);
 	}}
 	for (i = 0; i < o; i++) {
 	for (j = 0; j < i; j++) {
+		/* aa */
 		xm_tensor_set_derivative_block(oo, xm_dim_2(i, j),
 		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
+		/* bb */
 		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
 		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
 	}}
@@ -68,7 +72,9 @@ init_ov(size_t o, size_t v, xm_tensor_t *ov)
 
 	for (i = 0; i < o; i++) {
 	for (a = 0; a < v; a++) {
+		/* aa */
 		xm_tensor_set_canonical_block(ov, xm_dim_2(i, a));
+		/* bb */
 		xm_tensor_set_derivative_block(ov, xm_dim_2(i+o, a+v),
 		    xm_dim_2(i, a), xm_dim_2(0, 1), 1);
 	}}
@@ -82,10 +88,39 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 	(void)v;
 
 	for (i = 0; i < o; i++) {
-	for (j = 0; j < o; j++) {
-	for (k = 0; k < o; k++) {
-	for (l = 0; l < o; l++) {
-		xm_tensor_set_canonical_block(oooo, xm_dim_4(i, j, k, l));
+	for (j = i; j < o; j++) {
+	for (k = j; k < o; k++) {
+	for (l = k; l < o; l++) {
+		/* aaaa */
+		xm_tensor_set_canonical_block(oooo, xm_dim_4(i,j,k,l));
+		/* bbbb */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j+o,k+o,l+o),
+		    xm_dim_4(i,j,k,l), xm_dim_4(0,1,2,3), 1);
+		/* abba */
+		xm_tensor_set_canonical_block(oooo, xm_dim_4(i,j+o,k+o,l));
+		/* baab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,k,l+o),
+		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(0,1,2,3), 1);
+		/* abab */
+		xm_tensor_set_canonical_block(oooo, xm_dim_4(i,j+o,k,l+o));
+		/* baba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,k+o,l),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,2,3), 1);
+	}}}}
+	for (i = 0; i < o; i++) {
+	for (j = 0; j < i; j++) {
+	for (k = 0; k < j; k++) {
+	for (l = 0; l < k; l++) {
+		/* aaaa */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i,j,k,l),
+		    xm_dim_4(l,k,j,i), xm_dim_4(3,2,1,0), 1);
+		/* bbbb */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j+o,k+o,l+o),
+		    xm_dim_4(l,k,j,i), xm_dim_4(3,2,1,0), 1);
+		/* abba */
+		/* baab */
+		/* abab */
+		/* baba */
 	}}}}
 }
 
