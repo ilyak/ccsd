@@ -536,16 +536,6 @@ main(int argc, char **argv)
 	t2 = xm_tensor_create(bsoovv, type, allocator);
 	t2new = xm_tensor_create(bsoovv, type, allocator);
 
-	xm_block_space_free(bsoo);
-	xm_block_space_free(bsov);
-	xm_block_space_free(bsvv);
-	xm_block_space_free(bsoooo);
-	xm_block_space_free(bsooov);
-	xm_block_space_free(bsovov);
-	xm_block_space_free(bsoovv);
-	xm_block_space_free(bsovvv);
-	xm_block_space_free(bsvvvv);
-
 	init_oo(ob, vb, f_oo);
 	init_ov(ob, vb, f_ov);
 	init_oo(vb, ob, f_vv);
@@ -705,6 +695,15 @@ main(int argc, char **argv)
 	xm_tensor_free(i_vvvv);
 	xm_tensor_free(t2);
 	xm_tensor_free(t2new);
+	xm_block_space_free(bsoo);
+	xm_block_space_free(bsov);
+	xm_block_space_free(bsvv);
+	xm_block_space_free(bsoooo);
+	xm_block_space_free(bsooov);
+	xm_block_space_free(bsovov);
+	xm_block_space_free(bsoovv);
+	xm_block_space_free(bsovvv);
+	xm_block_space_free(bsvvvv);
 	xm_allocator_destroy(allocator);
 	timer_stop(timer);
 #ifdef XM_USE_MPI
