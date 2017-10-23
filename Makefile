@@ -1,5 +1,5 @@
 CC= cc
-CFLAGS= -g -Wall -Wextra -I../libxm/src
+CFLAGS= -g -Wall -Wextra -fopenmp -I../libxm/src
 LDFLAGS= -L../libxm/src -L/usr/local/lib
 LIBS= -lxm -lmyblas -lgfortran
 
