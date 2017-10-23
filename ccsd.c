@@ -464,9 +464,9 @@ main(int argc, char **argv)
 	xm_block_space_t *bsoo, *bsov, *bsvv;
 	xm_block_space_t *bsoooo, *bsooov, *bsovov, *bsoovv, *bsovvv, *bsvvvv;
 	xm_tensor_t *f_oo, *f_ov, *f_vv, *f1_vv, *f2_oo, *f2_ov, *f2_vv;
-	xm_tensor_t *f3_oo, *t1, *t1new;
+	xm_tensor_t *f3_oo, *d_ov, *t1, *t1new;
 	xm_tensor_t *i_oooo, *i4_oooo, *i_ooov, *i2a_ooov, *i_ovov, *i1a_ovov;
-	xm_tensor_t *i_oovv, *tt_oovv, *i_ovvv, *i_vvvv, *t2, *t2new;
+	xm_tensor_t *i_oovv, *tt_oovv, *i_ovvv, *i_vvvv, *d_oovv, *t2, *t2new;
 	xm_dim_t nblks;
 	size_t ob, vb, o, v;
 	int type = XM_SCALAR_DOUBLE;
@@ -521,6 +521,7 @@ main(int argc, char **argv)
 	f2_ov = xm_tensor_create(bsov, type, allocator);
 	f2_vv = xm_tensor_create(bsvv, type, allocator);
 	f3_oo = xm_tensor_create(bsoo, type, allocator);
+	d_ov = xm_tensor_create(bsov, type, allocator);
 	t1 = xm_tensor_create(bsov, type, allocator);
 	t1new = xm_tensor_create(bsov, type, allocator);
 	i_oooo = xm_tensor_create(bsoooo, type, allocator);
@@ -533,6 +534,7 @@ main(int argc, char **argv)
 	tt_oovv = xm_tensor_create(bsoovv, type, allocator);
 	i_ovvv = xm_tensor_create(bsovvv, type, allocator);
 	i_vvvv = xm_tensor_create(bsvvvv, type, allocator);
+	d_oovv = xm_tensor_create(bsoovv, type, allocator);
 	t2 = xm_tensor_create(bsoovv, type, allocator);
 	t2new = xm_tensor_create(bsoovv, type, allocator);
 
@@ -544,6 +546,7 @@ main(int argc, char **argv)
 	init_ov(ob, vb, f2_ov);
 	init_oo(vb, ob, f2_vv);
 	init_oo(ob, vb, f3_oo);
+	init_ov(ob, vb, d_ov);
 	init_ov(ob, vb, t1);
 	init_ov(ob, vb, t1new);
 	init_oooo(ob, vb, i_oooo);
@@ -556,6 +559,7 @@ main(int argc, char **argv)
 	init_oovv(ob, vb, tt_oovv);
 	init_ovvv(ob, vb, i_ovvv);
 	init_oooo(vb, ob, i_vvvv);
+	init_oovv(ob, vb, d_oovv);
 	init_oovv(ob, vb, t2);
 	init_oovv(ob, vb, t2new);
 	timer_stop(timer);
@@ -569,6 +573,7 @@ main(int argc, char **argv)
 	xm_set(f2_ov, drand48());
 	xm_set(f2_vv, drand48());
 	xm_set(f3_oo, drand48());
+	xm_set(d_ov, drand48());
 	xm_set(t1, drand48());
 	xm_set(t1new, drand48());
 	xm_set(i_oooo, drand48());
@@ -581,6 +586,7 @@ main(int argc, char **argv)
 	xm_set(tt_oovv, drand48());
 	xm_set(i_ovvv, drand48());
 	xm_set(i_vvvv, drand48());
+	xm_set(d_oovv, drand48());
 	xm_set(t2, drand48());
 	xm_set(t2new, drand48());
 	timer_stop(timer);
@@ -606,6 +612,7 @@ main(int argc, char **argv)
 	xm_contract(1, t2, f2_ov, 1, t1new, "abcd", "bd", "ac");
 	xm_contract(0.5, i_ovvv, t2, 1, t1new, "abcd", "aecd", "eb");
 	xm_contract(-0.5, i_ooov, t2, 1, t1new, "abcd", "abed", "ce");
+	/* xm_div(t1new, d_ov, "ia", "ia"); */
 	/* f2_oo */
 	xm_contract(1, t1, t1, 0, i1a_ovov, "ab", "cd", "abcd");
 	xm_copy(f2_oo, 1, f_oo, "ij", "ij");
@@ -614,9 +621,9 @@ main(int argc, char **argv)
 	xm_contract(1, i_oovv, i1a_ovov, 1, f2_oo, "abcd", "ecbd", "ea");
 	xm_contract(0.5, i_oovv, t2, 1, f2_oo, "abcd", "ebcd", "ea");
 	/* f2_vv */
-	xm_contract(1, t1, t1, 0, i1a_ovov, "ab", "cd", "abcd");
 	xm_copy(f2_vv, 1, f1_vv, "ab", "ab");
 	xm_contract(-1, f_ov, t1, 1, f2_vv, "ab", "ac", "cb");
+	/* from above i1a_ovov = t1 * t1 */
 	xm_contract(-1, i_oovv, i1a_ovov, 1, f2_vv, "abcd", "aebd", "ec");
 	/* i1a_ovov */
 	xm_copy(t2new, 1, t2, "ijab", "ijab");
@@ -646,6 +653,7 @@ main(int argc, char **argv)
 	xm_contract(-1, t2, f2_oo, 1, t2new, "abcd", "eb", "aecd");
 	xm_contract(0.5, i_vvvv, tt_oovv, 1, t2new, "abcd", "efcd", "efab");
 	xm_contract(0.5, t2, i4_oooo, 1, t2new, "abcd", "efab", "efcd");
+	/* xm_div(t2new, d_oovv, "ijab", "ijab"); */
 	/* energy */
 	xm_contract(1, i_oovv, t1, 0, t1new, "abcd", "bd", "ac");
 	timer_stop(timer);
@@ -659,6 +667,7 @@ main(int argc, char **argv)
 	xm_tensor_free_block_data(f2_ov);
 	xm_tensor_free_block_data(f2_vv);
 	xm_tensor_free_block_data(f3_oo);
+	xm_tensor_free_block_data(d_ov);
 	xm_tensor_free_block_data(t1);
 	xm_tensor_free_block_data(t1new);
 	xm_tensor_free_block_data(i_oooo);
@@ -671,6 +680,7 @@ main(int argc, char **argv)
 	xm_tensor_free_block_data(tt_oovv);
 	xm_tensor_free_block_data(i_ovvv);
 	xm_tensor_free_block_data(i_vvvv);
+	xm_tensor_free_block_data(d_oovv);
 	xm_tensor_free_block_data(t2);
 	xm_tensor_free_block_data(t2new);
 	xm_tensor_free(f_oo);
@@ -681,6 +691,7 @@ main(int argc, char **argv)
 	xm_tensor_free(f2_ov);
 	xm_tensor_free(f2_vv);
 	xm_tensor_free(f3_oo);
+	xm_tensor_free(d_ov);
 	xm_tensor_free(t1);
 	xm_tensor_free(t1new);
 	xm_tensor_free(i_oooo);
@@ -693,6 +704,7 @@ main(int argc, char **argv)
 	xm_tensor_free(tt_oovv);
 	xm_tensor_free(i_ovvv);
 	xm_tensor_free(i_vvvv);
+	xm_tensor_free(d_oovv);
 	xm_tensor_free(t2);
 	xm_tensor_free(t2new);
 	xm_block_space_free(bsoo);
