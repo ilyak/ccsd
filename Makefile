@@ -7,7 +7,7 @@ ccsd: ccsd.o
 	$(CC) -o $@ $(CFLAGS) ccsd.o $(LDFLAGS) $(LIBS)
 
 check: ccsd
-	./ccsd -b 7 -o 15 -v 31
+	./ccsd -o 15 -v 31 -b 7
 
 clean:
 	rm -f ccsd ccsd.o ccsd.core xmpagefile
