@@ -1,7 +1,9 @@
 CC= cc
-CFLAGS= -g -Wall -Wextra -fopenmp -I../libxm/src
-LDFLAGS= -L../libxm/src -L/usr/local/lib
-LIBS= -lxm -lmyblas -lomp -lgfortran
+CFLAGS= -g -Wall -Wextra -fopenmp -I$(LIBXM)
+LDFLAGS= -L$(LIBXM) -L/usr/local/lib
+LIBS= -lxm -lblas -lm
+
+LIBXM= ../libxm/src
 
 ccsd: ccsd.o
 	$(CC) -o $@ $(CFLAGS) ccsd.o $(LDFLAGS) $(LIBS)
