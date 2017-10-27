@@ -3,6 +3,18 @@ CFLAGS= -g -Wall -Wextra -fopenmp -I$(LIBXM)
 LDFLAGS= -L$(LIBXM) -L/usr/local/lib
 LIBS= -lxm -lblas -lm
 
+# Intel Compiler (release build)
+#CC= icc
+#CFLAGS= -DNDEBUG -Wall -O3 -fopenmp -mkl=sequential -I$(LIBXM)
+#LDFLAGS= -L$(LIBXM)
+#LIBS= -lxm -lm
+
+# Intel Compiler with MPI (release build)
+#CC= mpicc
+#CFLAGS= -DXM_USE_MPI -DNDEBUG -Wall -O3 -fopenmp -mkl=sequential -I$(LIBXM)
+#LDFLAGS= -L$(LIBXM)
+#LIBS= -lxm -lm
+
 LIBXM= ../libxm/src
 
 ccsd: ccsd.o
