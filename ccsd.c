@@ -752,7 +752,7 @@ main(int argc, char **argv)
 	xm_contract(1, t2, f2_ov, 1, t1new, "abcd", "bd", "ac");
 	xm_contract(0.5, i_ovvv, t2, 1, t1new, "abcd", "aecd", "eb");
 	xm_contract(-0.5, i_ooov, t2, 1, t1new, "abcd", "abed", "ce");
-	/* xm_div(t1new, d_ov, "ia", "ia"); */
+	xm_div(t1new, d_ov, "ia", "ia");
 	/* f2_oo */
 	xm_contract(1, t1, t1, 0, i1a_ovov, "ab", "cd", "abcd");
 	xm_copy(f2_oo, 1, f_oo, "ij", "ij");
@@ -793,7 +793,7 @@ main(int argc, char **argv)
 	xm_contract(-1, t2, f2_oo, 1, t2new, "abcd", "eb", "aecd");
 	xm_contract(0.5, i_vvvv, tt_oovv, 1, t2new, "abcd", "efcd", "efab");
 	xm_contract(0.5, t2, i4_oooo, 1, t2new, "abcd", "efab", "efcd");
-	/* xm_div(t2new, d_oovv, "ijab", "ijab"); */
+	xm_div(t2new, d_oovv, "ijab", "ijab");
 	/* energy */
 	xm_contract(1, i_oovv, t1, 0, t1new, "abcd", "bd", "ac");
 	timer_stop(timer);
