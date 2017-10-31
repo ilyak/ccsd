@@ -94,21 +94,12 @@ init_oo(size_t o, size_t v, xm_tensor_t *oo)
 	(void)v;
 
 	for (i = 0; i < o; i++) {
-	for (j = i; j < o; j++) {
+	for (j = 0; j < o; j++) {
 		/* aa */
 		xm_tensor_set_canonical_block(oo, xm_dim_2(i, j));
 		/* bb */
 		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
 		    xm_dim_2(i, j), xm_dim_2(0, 1), 1);
-	}}
-	for (i = 0; i < o; i++) {
-	for (j = 0; j < i; j++) {
-		/* aa */
-		xm_tensor_set_derivative_block(oo, xm_dim_2(i, j),
-		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
-		/* bb */
-		xm_tensor_set_derivative_block(oo, xm_dim_2(i+o, j+o),
-		    xm_dim_2(j, i), xm_dim_2(1, 0), -1);
 	}}
 }
 
@@ -131,6 +122,7 @@ static int
 is_zero_block(xm_tensor_t *t, size_t i, size_t j, size_t k, size_t l)
 {
 	xm_dim_t idx = xm_dim_4(i,j,k,l);
+
 	return xm_tensor_get_block_type(t, idx) == XM_BLOCK_TYPE_ZERO;
 }
 
@@ -152,15 +144,16 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j+o,k+o,l+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(0,1,2,3), 1);
-		/* abba */
-		xm_tensor_set_canonical_block(oooo, xm_dim_4(i,j+o,k+o,l));
-		/* baab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,k,l+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(0,1,2,3), 1);
 		/* abab */
 		xm_tensor_set_canonical_block(oooo, xm_dim_4(i,j+o,k,l+o));
 		/* baba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,k+o,l),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,2,3), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i,j+o,k+o,l),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,2,3), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,k,l+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,2,3), 1);
 	}
 	if (is_zero_block(oooo, j, i, k, l)) {
@@ -170,18 +163,18 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i+o,k+o,l+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(1,0,2,3), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,k,l+o),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,2,3), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,k+o,l),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,2,3), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,k+o,l),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,2,3), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,k,l+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,2,3), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,k,l+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(1,0,2,3), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,k+o,l),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(1,0,2,3), -1);
 	}
 	if (is_zero_block(oooo, i, j, l, k)) {
 		/* aaaa */
@@ -190,18 +183,18 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j+o,l+o,k+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(0,1,3,2), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i,j+o,l,k+o),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,3,2), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,l+o,k),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,3,2), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(i,j+o,l+o,k),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,3,2), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,l,k+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(0,1,3,2), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(i,j+o,l,k+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(0,1,3,2), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(i+o,j,l+o,k),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(0,1,3,2), -1);
 	}
 	if (is_zero_block(oooo, j, i, l, k)) {
 		/* aaaa */
@@ -210,17 +203,17 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i+o,l+o,k+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(1,0,3,2), 1);
-		/* abba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,l+o,k),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(1,0,3,2), 1);
-		/* baab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,l,k+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(1,0,3,2), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,l,k+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,3,2), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,l+o,k),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,3,2), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(j,i+o,l+o,k),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,3,2), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(j+o,i,l,k+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(1,0,3,2), 1);
 	}
 	if (is_zero_block(oooo, k, l, i, j)) {
@@ -230,17 +223,17 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l+o,i+o,j+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(2,3,0,1), 1);
-		/* abba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,i+o,j),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(2,3,0,1), 1);
-		/* baab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,i,j+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(2,3,0,1), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,i,j+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,0,1), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,i+o,j),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,0,1), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,i+o,j),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,0,1), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,i,j+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,0,1), 1);
 	}
 	if (is_zero_block(oooo, k, l, j, i)) {
@@ -250,18 +243,18 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l+o,j+o,i+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(2,3,1,0), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,j,i+o),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,1,0), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,j+o,i),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,1,0), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,j+o,i),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,1,0), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,j,i+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(2,3,1,0), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(k,l+o,j,i+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(2,3,1,0), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(k+o,l,j+o,i),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(2,3,1,0), -1);
 	}
 	if (is_zero_block(oooo, l, k, i, j)) {
 		/* aaaa */
@@ -270,18 +263,18 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k+o,i+o,j+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(3,2,0,1), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,i,j+o),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,0,1), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,i+o,j),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,0,1), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,i+o,j),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,0,1), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,i,j+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,0,1), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,i,j+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(3,2,0,1), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,i+o,j),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(3,2,0,1), -1);
 	}
 	if (is_zero_block(oooo, l, k, j, i)) {
 		/* aaaa */
@@ -290,17 +283,17 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k+o,j+o,i+o),
 		    xm_dim_4(i,j,k,l), xm_dim_4(3,2,1,0), 1);
-		/* abba */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,j+o,i),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(3,2,1,0), 1);
-		/* baab */
-		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,j,i+o),
-		    xm_dim_4(i,j+o,k+o,l), xm_dim_4(3,2,1,0), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,j,i+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,1,0), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,j+o,i),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,1,0), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(l,k+o,j+o,i),
+		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,1,0), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oooo, xm_dim_4(l+o,k,j,i+o),
 		    xm_dim_4(i,j+o,k,l+o), xm_dim_4(3,2,1,0), 1);
 	}
 	}}}}
@@ -320,15 +313,16 @@ init_ooov(size_t o, size_t v, xm_tensor_t *ooov)
 		/* bbbb */
 		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j+o,k+o,a+v),
 		    xm_dim_4(i,j,k,a), xm_dim_4(0,1,2,3), 1);
-		/* abba */
-		xm_tensor_set_canonical_block(ooov, xm_dim_4(i,j+o,k+o,a));
-		/* baab */
-		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k,a+v),
-		    xm_dim_4(i,j+o,k+o,a), xm_dim_4(0,1,2,3), 1);
 		/* abab */
 		xm_tensor_set_canonical_block(ooov, xm_dim_4(i,j+o,k,a+v));
 		/* baba */
 		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k+o,a),
+		    xm_dim_4(i,j+o,k,a+v), xm_dim_4(0,1,2,3), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(ooov, xm_dim_4(i,j+o,k+o,a),
+		    xm_dim_4(i,j+o,k,a+v), xm_dim_4(0,1,2,3), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k,a+v),
 		    xm_dim_4(i,j+o,k,a+v), xm_dim_4(0,1,2,3), 1);
 	}}}}
 	for (i = 0; i < o; i++) {
@@ -341,18 +335,18 @@ init_ooov(size_t o, size_t v, xm_tensor_t *ooov)
 		/* bbbb */
 		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j+o,k+o,a+v),
 		    xm_dim_4(j,i,k,a), xm_dim_4(1,0,2,3), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(ooov, xm_dim_4(i,j+o,k,a+v),
+		    xm_dim_4(j,i+o,k,a+v), xm_dim_4(1,0,2,3), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k+o,a),
+		    xm_dim_4(j,i+o,k,a+v), xm_dim_4(1,0,2,3), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(ooov, xm_dim_4(i,j+o,k+o,a),
 		    xm_dim_4(j,i+o,k,a+v), xm_dim_4(1,0,2,3), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k,a+v),
 		    xm_dim_4(j,i+o,k,a+v), xm_dim_4(1,0,2,3), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(ooov, xm_dim_4(i,j+o,k,a+v),
-		    xm_dim_4(j,i+o,k+o,a), xm_dim_4(1,0,2,3), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(ooov, xm_dim_4(i+o,j,k+o,a),
-		    xm_dim_4(j,i+o,k+o,a), xm_dim_4(1,0,2,3), -1);
 	}}}}
 }
 
@@ -420,15 +414,16 @@ init_oovv(size_t o, size_t v, xm_tensor_t *oovv)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j+o,a+v,b+v),
 		    xm_dim_4(i,j,a,b), xm_dim_4(0,1,2,3), 1);
-		/* abba */
-		xm_tensor_set_canonical_block(oovv, xm_dim_4(i,j+o,a+v,b));
-		/* baab */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
-		    xm_dim_4(i,j+o,a+v,b), xm_dim_4(0,1,2,3), 1);
 		/* abab */
 		xm_tensor_set_canonical_block(oovv, xm_dim_4(i,j+o,a,b+v));
 		/* baba */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a+v,b),
+		    xm_dim_4(i,j+o,a,b+v), xm_dim_4(0,1,2,3), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
+		    xm_dim_4(i,j+o,a,b+v), xm_dim_4(0,1,2,3), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
 		    xm_dim_4(i,j+o,a,b+v), xm_dim_4(0,1,2,3), 1);
 	}}}}
 	for (i = 0; i < o; i++) {
@@ -449,34 +444,34 @@ init_oovv(size_t o, size_t v, xm_tensor_t *oovv)
 		    xm_dim_4(j,i,b,a), xm_dim_4(0,1,3,2), -1);
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j+o,b+v,a+v),
 		    xm_dim_4(j,i,b,a), xm_dim_4(1,0,2,3), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a,b+v),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(j,i+o,a,b+v),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(0,1,3,2), -1);
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,b,a+v),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,2,3), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(j+o,i,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(0,1,3,2), -1);
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,b+v,a),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,2,3), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(j,i+o,a+v,b),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(0,1,3,2), -1);
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,b+v,a),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,2,3), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(j+o,i,a,b+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(0,1,3,2), -1);
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,b,a+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,2,3), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a,b+v),
-		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(j,i+o,a,b+v),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(0,1,3,2), -1);
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,b,a+v),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,2,3), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a+v,b),
-		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(j+o,i,a+v,b),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(0,1,3,2), -1);
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,b+v,a),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,2,3), -1);
 	}}}}
 	for (i = 0; i < o; i++) {
 	for (j = 0; j < i; j++) {
@@ -488,17 +483,17 @@ init_oovv(size_t o, size_t v, xm_tensor_t *oovv)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j+o,a+v,b+v),
 		    xm_dim_4(j,i,b,a), xm_dim_4(1,0,3,2), 1);
-		/* abba */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
-		/* baab */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a,b+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 	}}}
 	for (i = 0; i < o; i++) {
@@ -511,17 +506,17 @@ init_oovv(size_t o, size_t v, xm_tensor_t *oovv)
 		/* bbbb */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j+o,a+v,b+v),
 		    xm_dim_4(j,i,b,a), xm_dim_4(1,0,3,2), 1);
-		/* abba */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
-		/* baab */
-		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
-		    xm_dim_4(j,i+o,b+v,a), xm_dim_4(1,0,3,2), 1);
 		/* abab */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a,b+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 		/* baba */
 		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i,j+o,a+v,b),
+		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(oovv, xm_dim_4(i+o,j,a,b+v),
 		    xm_dim_4(j,i+o,b,a+v), xm_dim_4(1,0,3,2), 1);
 	}}}
 }
@@ -540,15 +535,16 @@ init_ovvv(size_t o, size_t v, xm_tensor_t *ovvv)
 		/* bbbb */
 		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a+v,b+v,c+v),
 		    xm_dim_4(i,a,b,c), xm_dim_4(0,1,2,3), 1);
-		/* abba */
-		xm_tensor_set_canonical_block(ovvv, xm_dim_4(i,a+v,b+v,c));
-		/* baab */
-		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b,c+v),
-		    xm_dim_4(i,a+v,b+v,c), xm_dim_4(0,1,2,3), 1);
 		/* abab */
 		xm_tensor_set_canonical_block(ovvv, xm_dim_4(i,a+v,b,c+v));
 		/* baba */
 		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b+v,c),
+		    xm_dim_4(i,a+v,b,c+v), xm_dim_4(0,1,2,3), 1);
+		/* abba */
+		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i,a+v,b+v,c),
+		    xm_dim_4(i,a+v,b,c+v), xm_dim_4(0,1,2,3), 1);
+		/* baab */
+		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b,c+v),
 		    xm_dim_4(i,a+v,b,c+v), xm_dim_4(0,1,2,3), 1);
 	}}}}
 	for (i = 0; i < o; i++) {
@@ -561,18 +557,18 @@ init_ovvv(size_t o, size_t v, xm_tensor_t *ovvv)
 		/* bbbb */
 		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a+v,b+v,c+v),
 		    xm_dim_4(i,a,c,b), xm_dim_4(0,1,3,2), -1);
+		/* abab */
+		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i,a+v,b,c+v),
+		    xm_dim_4(i,a+v,c,b+v), xm_dim_4(0,1,3,2), -1);
+		/* baba */
+		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b+v,c),
+		    xm_dim_4(i,a+v,c,b+v), xm_dim_4(0,1,3,2), -1);
 		/* abba */
 		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i,a+v,b+v,c),
 		    xm_dim_4(i,a+v,c,b+v), xm_dim_4(0,1,3,2), -1);
 		/* baab */
 		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b,c+v),
 		    xm_dim_4(i,a+v,c,b+v), xm_dim_4(0,1,3,2), -1);
-		/* abab */
-		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i,a+v,b,c+v),
-		    xm_dim_4(i,a+v,c+v,b), xm_dim_4(0,1,3,2), -1);
-		/* baba */
-		xm_tensor_set_derivative_block(ovvv, xm_dim_4(i+o,a,b+v,c),
-		    xm_dim_4(i,a+v,c+v,b), xm_dim_4(0,1,3,2), -1);
 	}}}}
 }
 
