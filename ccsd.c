@@ -593,6 +593,7 @@ main(int argc, char **argv)
 	xm_tensor_t *i_oooo, *i4_oooo, *i_ooov, *i2a_ooov, *i_ovov, *i1a_ovov;
 	xm_tensor_t *i_oovv, *tt_oovv, *i_ovvv, *i_vvvv, *d_oovv, *t2, *t2new;
 	xm_dim_t nblks;
+	double energy;
 	size_t ob, vb, o = 10, v = 40;
 	int ch, type = XM_SCALAR_DOUBLE;
 	time_t timer;
@@ -790,8 +791,14 @@ main(int argc, char **argv)
 	xm_contract(0.5, i_vvvv, tt_oovv, 1, t2new, "abcd", "efcd", "efab");
 	xm_contract(0.5, t2, i4_oooo, 1, t2new, "abcd", "efab", "efcd");
 	xm_div(t2new, d_oovv, "ijab", "ijab");
-	print("energy\n");
+	print("energy ");
+	xm_copy(t1, 1, t1new, "ia", "ia");
+	xm_copy(t2, 1, t2new, "ijab", "ijab");
 	xm_contract(1, i_oovv, t1, 0, t1new, "abcd", "bd", "ac");
+	energy = xm_dot(f_ov, t1, "ia", "ia") +
+		 0.5 * xm_dot(t1new, t1, "ia", "ia") +
+		 0.25 * xm_dot(i_oovv, t2, "ijab", "ijab");
+	print("= %.10lf\n", energy);
 	timer_stop(timer);
 
 	timer = timer_start("releasing the resources");
