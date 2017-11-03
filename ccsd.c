@@ -58,6 +58,12 @@ timer_stop(time_t timer)
 	print("done in %d sec\n", (int)(time(NULL) - timer));
 }
 
+static double
+random_value(void)
+{
+	return drand48() / 1000000.0;
+}
+
 static void
 split_block_space(xm_block_space_t *bs)
 {
@@ -702,30 +708,30 @@ main(int argc, char **argv)
 	timer_stop(timer);
 
 	timer = timer_start("filling the tensors");
-	xm_set(f_oo, drand48());
-	xm_set(f_ov, drand48());
-	xm_set(f_vv, drand48());
-	xm_set(f1_vv, drand48());
-	xm_set(f2_oo, drand48());
-	xm_set(f2_ov, drand48());
-	xm_set(f2_vv, drand48());
-	xm_set(f3_oo, drand48());
-	xm_set(d_ov, drand48());
-	xm_set(t1, drand48());
-	xm_set(t1new, drand48());
-	xm_set(i_oooo, drand48());
-	xm_set(i4_oooo, drand48());
-	xm_set(i_ooov, drand48());
-	xm_set(i2a_ooov, drand48());
-	xm_set(i_ovov, drand48());
-	xm_set(i1a_ovov, drand48());
-	xm_set(i_oovv, drand48());
-	xm_set(tt_oovv, drand48());
-	xm_set(i_ovvv, drand48());
-	xm_set(i_vvvv, drand48());
-	xm_set(d_oovv, drand48());
-	xm_set(t2, drand48());
-	xm_set(t2new, drand48());
+	xm_set(f_oo, random_value());
+	xm_set(f_ov, random_value());
+	xm_set(f_vv, random_value());
+	xm_set(f1_vv, random_value());
+	xm_set(f2_oo, random_value());
+	xm_set(f2_ov, random_value());
+	xm_set(f2_vv, random_value());
+	xm_set(f3_oo, random_value());
+	xm_set(d_ov, random_value());
+	xm_set(t1, random_value());
+	xm_set(t1new, random_value());
+	xm_set(i_oooo, random_value());
+	xm_set(i4_oooo, random_value());
+	xm_set(i_ooov, random_value());
+	xm_set(i2a_ooov, random_value());
+	xm_set(i_ovov, random_value());
+	xm_set(i1a_ovov, random_value());
+	xm_set(i_oovv, random_value());
+	xm_set(tt_oovv, random_value());
+	xm_set(i_ovvv, random_value());
+	xm_set(i_vvvv, random_value());
+	xm_set(d_oovv, random_value());
+	xm_set(t2, random_value());
+	xm_set(t2new, random_value());
 	timer_stop(timer);
 
 	timer = timer_start("running one ccsd iteration");
