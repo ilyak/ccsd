@@ -140,9 +140,9 @@ init_oooo(size_t o, size_t v, xm_tensor_t *oooo)
 	(void)v;
 
 	for (i = 0; i < o; i++) {
-	for (j = 0; j < o; j++) {
+	for (j = i; j < o; j++) {
 	for (k = 0; k < o; k++) {
-	for (l = 0; l < o; l++) {
+	for (l = k; l < o; l++) {
 
 	if (is_zero_block(oooo, i, j, k, l)) {
 		/* aaaa */
